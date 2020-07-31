@@ -5,6 +5,12 @@ import { startGame, cancelGame } from '../actions/settings';
 import { fetchDeckResult, fetchNewDeck } from '../actions/deck';
 
 import Instructions from './Instructions';
+import DrawCard from './DrawCard';
+import Card from './Card';
+import Guess from './Guess';
+import GameState from './GameState';
+
+import { fetchStates } from '../reducers/fetchStates';
 
 class App extends Component {
 
@@ -16,6 +22,16 @@ class App extends Component {
   
   render() {
     console.log('this', this);
+
+    if (this.props.fetchState == fetchStates.error) {
+      return (
+        <div>
+          <h3>Ocorreu um erro, tente reiniciar a aplicação:</h3>
+          <p>{this.props.message}</p>
+        </div>
+      )
+    }
+
     return (
       <div>
         <h2>♡ ♠ Evens or Odds ♣ ♢</h2>
@@ -23,6 +39,14 @@ class App extends Component {
           this.props.gameStarted ? (
               <div>
                 <h3>O jogo começou!</h3>
+                <br />
+                <GameState />
+                <br />
+                <Guess />
+                <br />
+                <DrawCard />
+                <br />
+                <Card />
                 <br />
                 <button onClick={this.props.cancelGame}>Cancelar o jogo</button>
               </div>
@@ -42,20 +66,31 @@ class App extends Component {
 }
 
 const mapStateToProps = state => {
-  console.log('state', state);
 
-  return { gameStarted: state.gameStarted };
+  const {
+    settings: { gameStarted },
+    deck: { fetchState, message }
+  } = state;
+
+  // const { gameStarted } = state.settings;
+  // const { fetchState, message } = state.deck;
+
+  return { gameStarted, fetchState, message };
+
 }
 
-const mapDispatchToProps = dispatch => {
-  return {
-    startGame: () => dispatch(startGame()),
-    cancelGame: () => dispatch(cancelGame()),
-    fetchDeckResult: json => dispatch(fetchDeckResult(json)),
-    fetchNewDeck: () => fetchNewDeck(dispatch)
-  }
-}
+// const mapDispatchToProps = dispatch => {
+//   return {
+//     startGame: () => dispatch(startGame()),
+//     cancelGame: () => dispatch(cancelGame()),
+//     fetchDeckResult: json => dispatch(fetchDeckResult(json)),
+//     fetchNewDeck: () => fetchNewDeck(dispatch)
+//   }
+// }
 
-const componentConnector = connect(mapStateToProps, mapDispatchToProps);
+const componentConnector = connect(
+  mapStateToProps, 
+  { startGame, cancelGame, fetchNewDeck }
+);
 
 export default componentConnector(App);

@@ -38,7 +38,7 @@ const mapDispatchToProps = dispatch => {
 
 const mapStateToProps = state => {
     return {
-        instructionsExpanded: state.instructionsExpanded
+        instructionsExpanded: state.settings.instructionsExpanded
     }
 }
 
